@@ -28,5 +28,10 @@ Planeja e executa as próprias tarefas, recebe o objetivo final e executa.
 ## Aula 2 - Criação de automação para envio de e-mail
 Agente de IA Simples \
 **Contexto:** uma agencia de marketing que trabalha com consultoria e cada consultor recebe um feedback de avaliação através de um formulário google forms que é preenchido pelo cliente e os dados encaminhados a uma planilha. \
-**Objetivo:** Dispar um e-mail para o consultor todos os dias as 9:00h da noite sempre que sua nota média de avaliação for menor que 7.
-![fluxo automocao envio email](/image/Markdown-mark.svg "This is a sample image.")
+**Objetivo:** Dispar um e-mail para o consultor todos os dias as 9:00h da noite sempre que sua nota média de avaliação for menor que 7. 
+
+![fluxo automocao envio email](https://github.com/gracieleo/ai-and-automation-agent/blob/master/automacao_envio_email.jpg)
+
+---
+
+## Aula 3 - 
