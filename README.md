@@ -34,6 +34,4 @@ Agente de IA Simples \
 
 ---
 
-## Aula 3 - Criação de um Agente de IA
-Transformar uma automação comum em um agente de inteligência artificial completo.\
-Integrar uma IA ao seu fluxo automatizado para que ela leia feedbacks, gere análises e escreva e-mails automáticos com sugestões personalizadas.
+## Aula 3 - 
