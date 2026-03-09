@@ -5,7 +5,7 @@
  - Gmail
  - Google Sheets
 
-[Arquivo passo a passo do desenvolvimento](https://markdownlivepreview.com/)
+[Arquivo passo a passo do desenvolvimento](https://github.com/gracieleo/ai-and-automation-agent/blob/master/passos_criacao_projeto.pdf)
 
 
  ---
