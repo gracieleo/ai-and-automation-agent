@@ -1,0 +1,557 @@
+{
+  "name": "Agencia-Mkt-Feedback",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 21
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        -320,
+        -32
+      ],
+      "id": "aa826bf6-68bd-4e27-9354-80f881d47567",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1rIYwHS4EfK9yeIz7Pk04d0E60KzPVskUPyow3Wy1p-k",
+          "mode": "list",
+          "cachedResultName": "Avaliação da Consultoria de Marketing (respostas)",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1rIYwHS4EfK9yeIz7Pk04d0E60KzPVskUPyow3Wy1p-k/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1703729857,
+          "mode": "list",
+          "cachedResultName": "Respostas ao formulário 1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1rIYwHS4EfK9yeIz7Pk04d0E60KzPVskUPyow3Wy1p-k/edit#gid=1703729857"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "Por qual consultor você foi atendido?",
+              "lookupValue": "={{ $json.Consultor }}"
+            },
+            {
+              "lookupColumn": "Data",
+              "lookupValue": "={{ $now.toFormat('dd/MM/yyyy') }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        320,
+        -16
+      ],
+      "id": "964869a7-6a19-43b8-bd7e-2a4330c2a8bc",
+      "name": "Get row(s) in sheet",
+      "alwaysOutputData": true,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "7lOntqUKDRkPrtlh",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "fieldsToSummarize": {
+          "values": [
+            {
+              "aggregation": "average",
+              "field": "Em uma escala de 1 a 10, quão satisfeito(a) você ficou com a experiência geral da consultoria de hoje?"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.summarize",
+      "typeVersion": 1.1,
+      "position": [
+        512,
+        -16
+      ],
+      "id": "f1c9d6e1-3c80-473b-a6fd-3433a393c4f5",
+      "name": "Summarize"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "25d3dfca-2e37-44ed-b6ba-23c9e7beff7e",
+              "leftValue": "={{ $json['average_Em_uma_escala_de_1_a_10,_quão_satisfeito(a)_você_ficou_com_a_experiência_geral_da_consultoria_de_hoje?'] }}",
+              "rightValue": 7,
+              "operator": {
+                "type": "number",
+                "operation": "lt"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        720,
+        -16
+      ],
+      "id": "2726a392-43ea-4db2-8824-07d4c9fc75c2",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $('Loop Over Items').item.json['E-mail'] }}",
+        "subject": "=[CONSULTOR] Nota de avaliação ({{ $('Summarize').item.json['average_Em_uma_escala_de_1_a_10,_quão_satisfeito(a)_você_ficou_com_a_experiência_geral_da_consultoria_de_hoje?'] }}) abaixo da média 7.",
+        "message": "={{ $('AI Agent').item.json.output }}",
+        "options": {
+          "appendAttribution": false,
+          "attachmentsUi": {
+            "attachmentsBinary": [
+              {}
+            ]
+          }
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        1904,
+        -224
+      ],
+      "id": "9eb464c3-599b-40bb-9a7b-c7b38547b2bf",
+      "name": "Send a message",
+      "webhookId": "10e19f8b-2006-4342-9cfc-c43b28cabe1b",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "dC04jsopwrQZMrB1",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "xlsx",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.convertToFile",
+      "typeVersion": 1.1,
+      "position": [
+        1744,
+        -224
+      ],
+      "id": "d5ce2aac-d736-4cf0-bcc1-31fbbe064b88",
+      "name": "Convert to File"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1rIYwHS4EfK9yeIz7Pk04d0E60KzPVskUPyow3Wy1p-k",
+          "mode": "list",
+          "cachedResultName": "Avaliação da Consultoria de Marketing (respostas)",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1rIYwHS4EfK9yeIz7Pk04d0E60KzPVskUPyow3Wy1p-k/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1703729857,
+          "mode": "list",
+          "cachedResultName": "Respostas ao formulário 1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1rIYwHS4EfK9yeIz7Pk04d0E60KzPVskUPyow3Wy1p-k/edit#gid=1703729857"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "Por qual consultor você foi atendido?",
+              "lookupValue": "={{ $('Loop Over Items').item.json.Consultor }}"
+            },
+            {
+              "lookupColumn": "Data",
+              "lookupValue": "={{ $now.toFormat('dd/MM/yyyy') }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1584,
+        -224
+      ],
+      "id": "42b4f195-3908-4918-80ef-8de730d604ec",
+      "name": "Get row(s) in sheet1",
+      "alwaysOutputData": true,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "7lOntqUKDRkPrtlh",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json['concatenated_Se_houver,_quais_são_as_sugestões_de_melhoria_para_futuras_consultorias?'] }}",
+        "options": {
+          "systemMessage": "=Você é um Supervisor de Qualidade analisando o desempenho de um consultor de marketing.\nO objetivo é escrever um e-mail de feedback construtivo, pois a média de satisfação do dia ficou abaixo da meta (Nota < 7).\n\nENTRADA:\nVocê receberá um texto contendo todas as respostas dos clientes à pergunta \"Sugestões de melhoria\", concatenadas.\nPode haver desde zero até dezenas de comentários.\n\nINSTRUÇÕES DE ANÁLISE:\n1. Sintetize os feedbacks: Não liste cada comentário individualmente. Se houver 10 comentários sobre \"atraso\", agrupe em um único ponto de atenção.\n2. Identifique os temas principais: Foque nos padrões (ex: clareza, pontualidade, empatia, domínio técnico).\n3. Se a lista estiver vazia ou com textos irrelevantes (ex: \"não\", \"ok\"), assuma que faltou conexão com o cliente e oriente sobre proatividade.\n4. O tom deve ser profissional, direto e focado em solução (mentoria), não em punição.\n\nFORMATO DE SAÍDA:\nRetorne APENAS o código HTML do corpo do e-mail (sem tags <html>, <head> ou ```).\nUse a seguinte estrutura de tags para organizar o texto:\n- <p> para parágrafos.\n- <b> para destaques importantes.\n- <ul> e <li> para listar os principais pontos de melhoria identificados.\n\nEstrutura do conteúdo:\n1. Saudação e contexto sobre a nota do dia estar abaixo da meta.\n2. Resumo geral do sentimento dos clientes (uma visão macro baseada no que leu).\n3. Lista com os principais pontos de fricção ou melhoria citados (agrupados por tema).\n4. Dê recomendações práticas e acionáveis para as próximas consultorias.\n5. Encerramento\n\nTente ajudar ao máximo nas análises de forma prática para a tomada de ação visando a melhoria do consultor.\n\nObservações:\n\nChame o consultor pelo nome {{ $('Loop Over Items').item.json.Consultor }}\nComente que está em anexo a planilha com todos os comentários e avaliações das consultorias do dia de hoje"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        1312,
+        -224
+      ],
+      "id": "c1d02dec-5b0a-47a5-8d2e-ebc0ae25c46d",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "fieldsToSummarize": {
+          "values": [
+            {
+              "aggregation": "concatenate",
+              "field": "Se houver, quais são as sugestões de melhoria para futuras consultorias?",
+              "separateBy": "other",
+              "customSeparator": ";\n\nPRÓXIMO FEEDBACK:\n"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.summarize",
+      "typeVersion": 1.1,
+      "position": [
+        1152,
+        -224
+      ],
+      "id": "956c35cd-707e-44bf-8d88-87d8af5fb517",
+      "name": "Summarize1"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        1312,
+        -32
+      ],
+      "id": "9d6d37d3-2a34-40ca-8de1-eb5170932d87",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "TV4AguUpaTrNUWKh",
+          "name": "Google Gemini(PaLM) Api account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $json['concatenated_Se_houver,_quais_são_as_sugestões_de_melhoria_para_futuras_consultorias?'] }}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        1408,
+        128
+      ],
+      "id": "402b05c0-b146-4e90-8cfb-48c626eae6d1",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1rIYwHS4EfK9yeIz7Pk04d0E60KzPVskUPyow3Wy1p-k",
+          "mode": "list",
+          "cachedResultName": "Avaliação da Consultoria de Marketing (respostas)",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1rIYwHS4EfK9yeIz7Pk04d0E60KzPVskUPyow3Wy1p-k/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1703729857,
+          "mode": "list",
+          "cachedResultName": "Respostas ao formulário 1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1rIYwHS4EfK9yeIz7Pk04d0E60KzPVskUPyow3Wy1p-k/edit#gid=1703729857"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "Por qual consultor você foi atendido?",
+              "lookupValue": "={{ $('Loop Over Items').item.json.Consultor }}"
+            },
+            {
+              "lookupColumn": "Data",
+              "lookupValue": "={{ $now.toFormat('dd/MM/yyyy') }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        944,
+        -224
+      ],
+      "id": "cc6cb55a-2232-419e-9fe4-02f9280948f1",
+      "name": "Get row(s) in sheet2",
+      "alwaysOutputData": true,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "7lOntqUKDRkPrtlh",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1rIYwHS4EfK9yeIz7Pk04d0E60KzPVskUPyow3Wy1p-k",
+          "mode": "list",
+          "cachedResultName": "Avaliação da Consultoria de Marketing (respostas)",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1rIYwHS4EfK9yeIz7Pk04d0E60KzPVskUPyow3Wy1p-k/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 220474785,
+          "mode": "list",
+          "cachedResultName": "Consultores",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1rIYwHS4EfK9yeIz7Pk04d0E60KzPVskUPyow3Wy1p-k/edit#gid=220474785"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -112,
+        -32
+      ],
+      "id": "3d4bf49a-3065-4b71-89d8-707580a4c381",
+      "name": "Get row(s) in sheet3",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "7lOntqUKDRkPrtlh",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        96,
+        -32
+      ],
+      "id": "1f748b2d-52e4-4d1d-8ca7-1b526df09756",
+      "name": "Loop Over Items"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Get row(s) in sheet3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet": {
+      "main": [
+        [
+          {
+            "node": "Summarize",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Summarize": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Get row(s) in sheet2",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Convert to File": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet1": {
+      "main": [
+        [
+          {
+            "node": "Convert to File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Get row(s) in sheet1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Summarize1": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet2": {
+      "main": [
+        [
+          {
+            "node": "Summarize1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet3": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Get row(s) in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a message": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "2f45caaf-6c2d-44dd-82c3-d00578e968b4",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "5331d7670a2eceacfc33561a6b2a800c8a3ca8358e6b25f76858e548e53c4816"
+  },
+  "id": "H1qj92r7oVV4VqZI",
+  "tags": []
+}
