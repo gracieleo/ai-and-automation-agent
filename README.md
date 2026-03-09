@@ -5,6 +5,9 @@
  - Gmail
  - Google Sheets
 
+[Arquivo passo a passo do desenvolvimento](https://markdownlivepreview.com/)
+
+
  ---
 
 
@@ -40,3 +43,12 @@ Transformar uma automação comum em um agente de inteligência artificial compl
 Integrar uma IA ao seu fluxo automatizado para que ela leia feedbacks, gere análises e escreva e-mails automáticos com sugestões personalizadas.
 
 ![fluxo automocao agente ia](https://github.com/gracieleo/ai-and-automation-agent/blob/master/agente_ia.jpg)
+
+---
+
+## Aula 4 - Melhoramento do Agente de IA
+
+Fazer o agente olhar para os dados de todos os consultores cadastrados na planilha, no passo anterior ainda estava pegando dados de apenas um consultor.
+
+![fluxo automocao agente ia_melhoria](https://github.com/gracieleo/ai-and-automation-agent/blob/master/agente_ia_melhoria.jpg)
+
